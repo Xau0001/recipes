@@ -4,7 +4,7 @@
 > Kalorienreduzierte Version mit mehr Gemüsevolumen, magerem Hack und Magerquark-Dressing.  
 > Schmeckt kalt am besten – ideal für Meal Prep.
 
-📋 [→ Einkaufsliste](einkaufsliste.html)
+📋 [→ Einkaufsliste](einkaufsliste.md)
 
 ---
 
