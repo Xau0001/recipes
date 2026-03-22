@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Einkaufsliste – Nudelsalat mit Hackfleisch</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fffdf7;
+    --accent: #c84b2f;
+    --accent-light: #f0e0da;
+    --text: #1a1208;
+    --muted: #8a7a65;
+    --border: #ddd5c0;
+    --check: #2d6a2d;
+    --check-bg: #e8f5e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--text);
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 2rem;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .progress-wrap {
+    margin: 1.5rem 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--check);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    white-space: nowrap;
+    min-width: 3.5rem;
+    text-align: right;
+  }
+
+  .section {
+    margin-bottom: 1.8rem;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+
+  .item:hover { background: var(--accent-light); }
+
+  .item.done {
+    background: var(--check-bg);
+    opacity: 0.6;
+  }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+
+  .item.done .checkbox {
+    background: var(--check);
+    border-color: var(--check);
+  }
+
+  .checkmark {
+    display: none;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+  }
+
+  .item.done .checkmark { display: block; }
+
+  .item-name {
+    flex: 1;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+  }
+
+  .item.done .item-name {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .item-amount {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .tip {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+    padding: 0.8rem 1rem;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.78rem;
+    color: var(--text);
+    margin-top: 2rem;
+    line-height: 1.5;
+  }
+
+  .tip strong { color: var(--accent); }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  button {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0.55rem 1rem;
+    border: 1.5px solid var(--border);
+    transition: all 0.15s;
+  }
+
+  .btn-reset {
+    background: var(--surface);
+    color: var(--muted);
+  }
+
+  .btn-reset:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .btn-all {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  .btn-all:hover { opacity: 0.8; }
+
+  .done-banner {
+    display: none;
+    text-align: center;
+    padding: 1rem;
+    background: var(--check-bg);
+    border: 1.5px solid var(--check);
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    color: var(--check);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <span class="tag">🛒 Einkaufsliste · 4 Portionen</span>
+    <h1>Nudelsalat mit Hackfleisch</h1>
+    <p class="meta">~480 kcal/Portion · Volumetric Edition</p>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+      <span class="progress-label" id="progress-label">0 / 0</span>
+    </div>
+  </header>
+
+  <div id="list"></div>
+
+  <div class="tip">
+    <strong>Tipp:</strong> Rinderhack in beschichteter Pfanne <strong>ohne Öl</strong> anbraten – spart ~80 kcal/Portion.
+  </div>
+
+  <div class="actions">
+    <button class="btn-reset" onclick="resetAll()">↺ Zurücksetzen</button>
+    <button class="btn-all" onclick="checkAll()">✓ Alle abhaken</button>
+  </div>
+
+  <div class="done-banner" id="done-banner">🎉 Alles eingekauft!</div>
+</div>
+
+<script>
+const STORE_KEY = 'nudelsalat_checklist';
+
+const data = [
+  {
+    title: '🥩 Fleisch',
+    items: [
+      { id: 'n1', name: 'Rinderhack (5% Fett)', amount: '400 g' },
+    ]
+  },
+  {
+    title: '🍝 Nudeln',
+    items: [
+      { id: 'n2', name: 'Fusilli oder Farfalle', amount: '300 g' },
+    ]
+  },
+  {
+    title: '🥗 Gemüse',
+    items: [
+      { id: 'n3', name: 'Rote Paprika', amount: '2 Stück' },
+      { id: 'n4', name: 'Salatgurke', amount: '1 Stück' },
+      { id: 'n5', name: 'Rote Zwiebel', amount: '1 Stück' },
+      { id: 'n6', name: 'Kirschtomaten', amount: '250 g' },
+      { id: 'n7', name: 'Champignons', amount: '200 g' },
+      { id: 'n8', name: 'Frische Petersilie', amount: '1 Bund' },
+    ]
+  },
+  {
+    title: '🧀 Milchprodukte',
+    items: [
+      { id: 'n9',  name: 'Magerquark', amount: '~80 g' },
+      { id: 'n10', name: 'Joghurt (0,1% Fett)', amount: '~60 g' },
+      { id: 'n11', name: 'Mayonnaise light', amount: '1 EL' },
+    ]
+  },
+  {
+    title: '🫙 Gewürze & Sonstiges',
+    items: [
+      { id: 'n12', name: 'Olivenöl', amount: '1 EL' },
+      { id: 'n13', name: 'Mittelscharfer Senf', amount: '1 EL' },
+      { id: 'n14', name: 'Weißweinessig', amount: '2 EL' },
+      { id: 'n15', name: 'Paprikapulver (normal)', amount: '1 TL' },
+      { id: 'n16', name: 'Salz & Pfeffer', amount: 'n. B.' },
+    ]
+  }
+];
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+}
+
+function render() {
+  const state = loadState();
+  const container = document.getElementById('list');
+  container.innerHTML = '';
+
+  data.forEach(section => {
+    const sec = document.createElement('div');
+    sec.className = 'section';
+    sec.innerHTML = `<div class="section-title">${section.title}</div>`;
+
+    section.items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item' + (state[item.id] ? ' done' : '');
+      div.innerHTML = `
+        <div class="checkbox"><span class="checkmark">✓</span></div>
+        <span class="item-name">${item.name}</span>
+        <span class="item-amount">${item.amount}</span>
+      `;
+      div.onclick = () => toggle(item.id);
+      sec.appendChild(div);
+    });
+
+    container.appendChild(sec);
+  });
+
+  updateProgress(state);
+}
+
+function toggle(id) {
+  const state = loadState();
+  state[id] = !state[id];
+  saveState(state);
+  render();
+}
+
+function resetAll() {
+  saveState({});
+  render();
+}
+
+function checkAll() {
+  const state = {};
+  data.forEach(s => s.items.forEach(i => state[i.id] = true));
+  saveState(state);
+  render();
+}
+
+function updateProgress(state) {
+  const allItems = data.flatMap(s => s.items);
+  const total = allItems.length;
+  const checked = allItems.filter(i => state[i.id]).length;
+  const pct = total ? (checked / total * 100) : 0;
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${checked} / ${total}`;
+  document.getElementById('done-banner').style.display = checked === total && total > 0 ? 'block' : 'none';
+}
+
+render();
+</script>
+</body>
+</html>
