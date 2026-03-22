@@ -11,8 +11,8 @@ Alle Gerichte schmecken warm und kalt und halten sich **2–3 Tage im Kühlschra
 
 | Ordner | Gericht | kcal/Portion |
 |---|---|---|
-| [`rezepte/nudelsalat_hackfleisch/`](rezepte/nudelsalat_hackfleisch/rezept.md) | Nudelsalat mit Hackfleisch | ~480 kcal |
-| [`rezepte/greek_bowl/`](rezepte/greek_bowl/rezept.md) | Pasta-Hackfleisch-Bowl Greek Style | ~430 kcal |
+| [`nudelsalat_hackfleisch/`](nudelsalat_hackfleisch/rezept.md) | Nudelsalat mit Hackfleisch | ~480 kcal |
+| [`greek_bowl/`](greek_bowl/rezept.md) | Pasta-Hackfleisch-Bowl Greek Style | ~430 kcal |
 
 ---
 
