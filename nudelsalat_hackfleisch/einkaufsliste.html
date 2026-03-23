@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Einkaufsliste – Nudelsalat mit Hackfleisch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f7f3ee; --card: #ffffff; --ink: #1e1b18; --muted: #8a8178;
+      --accent: #c0392b; --accent2: #e8d5b0; --check: #2e7d32; --line: #e5dfd7; --radius: 14px;
+    }
+    body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--ink); min-height: 100vh; padding: 2rem 1rem 4rem; }
+    .page { max-width: 560px; margin: 0 auto; }
+    header { margin-bottom: 2.5rem; border-bottom: 2px solid var(--ink); padding-bottom: 1.25rem; }
+    .back-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .8rem; font-weight: 500; text-decoration: none; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 1rem; transition: color .2s; }
+    .back-link:hover { color: var(--accent); }
+    h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.15; margin-bottom: .5rem; }
+    .meta { font-size: .85rem; color: var(--muted); }
+    .progress-wrap { margin-bottom: 2rem; }
+    .progress-label { display: flex; justify-content: space-between; font-size: .8rem; font-weight: 500; color: var(--muted); margin-bottom: .4rem; }
+    .progress-label span:last-child { color: var(--check); font-weight: 600; }
+    .progress-bar { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--check); border-radius: 999px; transition: width .4s ease; width: 0%; }
+    .controls { display: flex; gap: .6rem; margin-bottom: 2rem; }
+    .btn { flex: 1; padding: .55rem 1rem; border: 1.5px solid var(--line); border-radius: 8px; background: var(--card); font-family: inherit; font-size: .8rem; font-weight: 500; cursor: pointer; color: var(--ink); transition: background .15s, border-color .15s; }
+    .btn:hover { background: var(--accent2); border-color: var(--accent2); }
+    .btn.danger:hover { background: #fdecea; border-color: #c0392b; color: #c0392b; }
+    .section { margin-bottom: 1.75rem; }
+    .section-title { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; display: flex; align-items: center; gap: .5rem; }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+    .item { display: flex; align-items: center; gap: .85rem; padding: .75rem .9rem; background: var(--card); border-radius: var(--radius); margin-bottom: .5rem; cursor: pointer; border: 1.5px solid transparent; transition: border-color .2s, opacity .3s, background .2s; user-select: none; }
+    .item:hover { border-color: var(--accent2); }
+    .item.checked { opacity: .5; background: #f9f9f9; }
+    .checkbox { width: 22px; height: 22px; border: 2px solid var(--line); border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background .2s, border-color .2s; }
+    .item.checked .checkbox { background: var(--check); border-color: var(--check); }
+    .checkbox svg { display: none; width: 13px; height: 13px; }
+    .item.checked .checkbox svg { display: block; }
+    .item-name { flex: 1; font-size: .95rem; }
+    .item.checked .item-name { text-decoration: line-through; color: var(--muted); }
+    .item-amount { font-size: .85rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
+    .item.checked .item-amount { color: var(--muted); }
+    .tip { margin-top: 2rem; padding: .9rem 1rem; background: var(--accent2); border-radius: var(--radius); font-size: .85rem; line-height: 1.5; color: #5a4a2f; }
+    .tip strong { color: #3d2f10; }
+    .done-banner { display: none; text-align: center; padding: 1.5rem; background: var(--check); color: #fff; border-radius: var(--radius); margin-top: 1.5rem; font-size: 1rem; font-weight: 600; animation: pop .4s ease; }
+    @keyframes pop { 0% { transform: scale(.9); opacity: 0; } 60% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
+  </style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <a class="back-link" href="rezept.md">← Zum Rezept</a>
+    <h1>Nudelsalat mit Hackfleisch</h1>
+    <p class="meta">4 Portionen &nbsp;·&nbsp; ~480 kcal/Portion &nbsp;·&nbsp; Volumetric Edition</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Fortschritt</span><span id="progress-text">0 / 0</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" onclick="checkAll()">Alle abhaken</button>
+    <button class="btn danger" onclick="resetAll()">Zurücksetzen</button>
+  </div>
+
+  <div id="list">
+    <div class="section">
+      <div class="section-title">🥩 Fleisch</div>
+      <div class="item" data-id="hack" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Rinderhack (5% Fett)</span><span class="item-amount">400 g</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">🍝 Nudeln</div>
+      <div class="item" data-id="nudeln" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Fusilli oder Farfalle</span><span class="item-amount">300 g</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">🥗 Gemüse</div>
+      <div class="item" data-id="paprika" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Rote Paprika</span><span class="item-amount">2 Stück</span>
+      </div>
+      <div class="item" data-id="gurke" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Salatgurke</span><span class="item-amount">1 Stück</span>
+      </div>
+      <div class="item" data-id="zwiebel" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Rote Zwiebel</span><span class="item-amount">1 Stück</span>
+      </div>
+      <div class="item" data-id="tomaten" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Kirschtomaten</span><span class="item-amount">250 g</span>
+      </div>
+      <div class="item" data-id="champignons" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Champignons</span><span class="item-amount">200 g</span>
+      </div>
+      <div class="item" data-id="petersilie" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Frische Petersilie</span><span class="item-amount">1 Bund</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">🧀 Milchprodukte</div>
+      <div class="item" data-id="quark" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Magerquark</span><span class="item-amount">4 EL (~80 g)</span>
+      </div>
+      <div class="item" data-id="joghurt" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Joghurt (0,1% Fett)</span><span class="item-amount">3 EL (~60 g)</span>
+      </div>
+      <div class="item" data-id="mayo" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Mayonnaise light</span><span class="item-amount">1 EL</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">🫙 Gewürze & Sonstiges</div>
+      <div class="item" data-id="olivenoel" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Olivenöl</span><span class="item-amount">1 EL</span>
+      </div>
+      <div class="item" data-id="senf" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Mittelscharfer Senf</span><span class="item-amount">1 EL</span>
+      </div>
+      <div class="item" data-id="essig" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Weißweinessig</span><span class="item-amount">2 EL</span>
+      </div>
+      <div class="item" data-id="paprikapulver" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Paprikapulver</span><span class="item-amount">1 TL</span>
+      </div>
+      <div class="item" data-id="salzpfeffer" onclick="toggle(this)">
+        <div class="checkbox"><svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1,5 4.5,8.5 11,1"/></svg></div>
+        <span class="item-name">Salz & Pfeffer</span><span class="item-amount">nach Bedarf</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">💡 <strong>Tipp:</strong> Rinderhack in beschichteter Pfanne <strong>ohne Öl</strong> anbraten – spart ~80 kcal/Portion.</div>
+  <div class="done-banner" id="done-banner">🎉 Alles eingepackt – viel Spaß beim Kochen!</div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'nudelsalat_checks';
+  function getState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
+  function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  function toggle(el) {
+    el.classList.toggle('checked');
+    const s = getState(); s[el.dataset.id] = el.classList.contains('checked'); saveState(s); updateProgress();
+  }
+  function checkAll() {
+    document.querySelectorAll('.item').forEach(el => { el.classList.add('checked'); const s = getState(); s[el.dataset.id] = true; saveState(s); }); updateProgress();
+  }
+  function resetAll() { document.querySelectorAll('.item').forEach(el => el.classList.remove('checked')); localStorage.removeItem(STORAGE_KEY); updateProgress(); }
+  function updateProgress() {
+    const items = document.querySelectorAll('.item');
+    const checked = document.querySelectorAll('.item.checked').length;
+    const total = items.length;
+    document.getElementById('progress-fill').style.width = (total ? checked / total * 100 : 0) + '%';
+    document.getElementById('progress-text').textContent = checked + ' / ' + total;
+    document.getElementById('done-banner').style.display = (checked === total && total > 0) ? 'block' : 'none';
+  }
+  const state = getState();
+  document.querySelectorAll('.item').forEach(el => { if (state[el.dataset.id]) el.classList.add('checked'); });
+  updateProgress();
+</script>
+</body>
+</html>
