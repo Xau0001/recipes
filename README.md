@@ -14,28 +14,18 @@ Alle Gerichte schmecken warm und kalt und halten sich **2–3 Tage im Kühlschra
 | [`nudelsalat_hackfleisch/`](nudelsalat_hackfleisch/rezept.md) | Nudelsalat mit Hackfleisch | ~480 kcal | [🛒 HTML](https://xau0001.github.io/recipes/nudelsalat_hackfleisch/einkaufsliste.html) |
 | [`greek_bowl/`](greek_bowl/rezept.md) | Pasta-Hackfleisch-Bowl Greek Style | ~430 kcal | [🛒 HTML](https://xau0001.github.io/recipes/greek_bowl/einkaufsliste.html) |
 
-> ⚠️ `USERNAME` und `REPO` in den Links oben durch deinen GitHub-Nutzernamen und Repository-Namen ersetzen.
 
 ---
 
 ## ➕ Neues Rezept hinzufügen
 
 1. [`TEMPLATE.md`](TEMPLATE.md) ansehen
-2. Neuen Ordner unter `rezepte/` anlegen: `rezepte/name_des_gerichts/`
-3. `TEMPLATE.md` zweimal in den neuen Ordner kopieren → `rezept.md` und `einkaufsliste.md`
+2. Neuen Ordner unter `rezepte/` anlegen: `recipes/name_des_gerichts/`
+3. `TEMPLATE.md` einmal in den neuen Ordner kopieren → `rezept.md`
 4. `einkaufsliste.html` aus einem bestehenden Rezept kopieren und Inhalt anpassen
 5. Zeile in der Tabelle oben ergänzen *(einzige Änderung an bestehenden Dateien)*
 
 > Alle anderen Dateien bleiben unberührt.
-
----
-
-## ⚙️ GitHub Pages einrichten
-
-1. Repo auf **Public** stellen
-2. `Settings` → `Pages` → Source: **Deploy from a branch** → Branch: `main` / `/ (root)`
-3. Branch Protection Rule für `main` anlegen (`Require pull request before merging`), damit nur du pushen kannst
-4. Links in der Tabelle oben anpassen: `USERNAME` → dein GitHub-Name, `REPO` → Repository-Name
 
 ---
 
