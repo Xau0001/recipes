@@ -4,7 +4,7 @@
 > Kalorienreduzierte Version mit mehr Gemüsevolumen, magerem Hack und Magerquark-Dressing.  
 > Schmeckt kalt am besten – ideal für Meal Prep.
 
-📋 [→ Einkaufsliste](einkaufsliste.md)
+📋 [→ Einkaufsliste](https://xau0001.github.io/recipes/nudelsalat_hackfleisch/einkaufsliste.html)
 
 ---
 
